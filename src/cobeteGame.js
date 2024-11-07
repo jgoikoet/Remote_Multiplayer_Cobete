@@ -79,41 +79,6 @@ redWinner.src = 'src/images/win_red.jpg';
 const blueWinner = new Image()
 blueWinner.src = 'src/images/win_blue.jpg';
 
-// function inializeEventListener()
-// {
-// 	window.addEventListener('keydown', (event) => {
-// 		if (event.key === 'a' && left === false) {
-// 			button('leftOn');
-// 			left = true;
-// 		}
-// 		if (event.key === 's' && right === false) {
-// 			button('rightOn');
-// 			right = true;
-// 		}
-// 		if (event.key === 'd' && motor === false) {
-// 			button('motorOn');
-// 			motor = true;
-// 		}
-// 		if (event.key === 'f') {
-// 			button('fire');
-// 		}
-// 	});
-	
-// 	window.addEventListener('keyup', (event) => {
-// 		if (event.key === 'a') {
-// 			button('leftOff');
-// 			left = false;
-// 		}
-// 		if (event.key === 's') {
-// 			button('rightOff');
-// 			right = false;
-// 		}
-// 		if (event.key === 'd') {
-// 			button('motorOff');
-// 			motor = false;
-// 		}
-// 	});
-// }
 
 function handleKeydown(event) {
     if (event.key === 'a' && left === false) {
@@ -337,10 +302,6 @@ export async function waiting()
 		showMessage('Error: The other player has disconnected\n(Maybe dead, maybe tomando cañas)', 'red')
 		imageOn = imgWaiting;
 		terminateCobeteGame();
-		window.removeEventListener('keydown', handleKeydown);
-    	window.removeEventListener('keyup', handleKeyup);
-		window.addEventListener('keydown', handleKeydown);
-		window.addEventListener('keyup', handleKeyup);
 		//refresh();
 	}
 }
@@ -441,6 +402,11 @@ export function terminateCobeteGame() {
 
 	document.removeEventListener('keydown', gameLoop);
 
+	window.removeEventListener('keydown', handleKeydown);
+    window.removeEventListener('keyup', handleKeyup);
+	window.addEventListener('keydown', handleKeydown);
+	window.addEventListener('keyup', handleKeyup);
+	
 	if (gameLoopId)
 		cancelAnimationFrame(gameLoopId);
 	if (timeoutId)

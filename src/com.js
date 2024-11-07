@@ -32,7 +32,7 @@ window.addEventListener('popstate', function(event) {
 
 export function connectSocket()
 {
-    socket = new WebSocket('ws://10.14.5.1:50002/ws/game/');
+    socket = new WebSocket('ws://10.14.2.1:50002/ws/game/');
 
 	socket.onopen = function(e) {
         console.log("Conectado al WebSocket");
@@ -46,13 +46,6 @@ export function connectSocket()
             console.log("Mensaje del servidor:");
             console.log("Type: ", mensaje.type);
             if (mensaje.type == 'waiting')
-                console.log("Action: ", mensaje.action);
-        }
-            
-    
-        if (mensaje.type == 'refresh')
-        {
-            posXR = mensaje.player1X;
             posYR = mensaje.player1Y;
             anguloR = mensaje.player1Angle;
             posXB = mensaje.player2X;
@@ -85,7 +78,7 @@ export function connectSocket()
         if (event.wasClean) {
             console.log(`Conexión cerrada limpiamente, código: ${event.code}, motivo: ${event.reason}`);
         } else {
-            console.log("Conexión terminada");
+            console.log("Conexión terminada");b
         }
     };
     

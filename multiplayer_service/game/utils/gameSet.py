@@ -9,6 +9,7 @@ class gameSetter:
 		self.waiting_players = []
 		self.active_rooms= {} 
 		self.active_games = {} # no se si lo voy a usar
+		self.tasks = {}
 
 
 	async def addPlayer(self, player):
@@ -33,11 +34,13 @@ class gameSetter:
 			player2.room_id = room_id
 			game = gamePlayer(player1, player2)
 			self.active_rooms[room_id] = [player1, player2]
-			#self.active_games[room_id] = game
+			self.active_games[room_id] = game
 
 			await self.sendWaitingMessage(player1, player2)
 	
-			asyncio.create_task(game.play())
+			task = asyncio.create_task(game.play())
+
+			self.tasks[room_id] = task
 
 		for p in self.waiting_players:
 			print("waiting players endespues:", p.id)
@@ -62,13 +65,13 @@ class gameSetter:
 	
 	async def disconnectPlayer(self, player):
 
-		
-
 		if player in self.waiting_players:
 			self.waiting_players.remove(player)
 			print("el desconectado estaba esperando: ", player.id)
 
 		if player.room_id in self.active_rooms:
+
+			self.tasks[player.room_id].cancel()
 
 			print("Active rooms:", self.active_rooms)
 
