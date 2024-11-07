@@ -32,9 +32,9 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		print("Entrada en desconexion")
 		
 		# Si el jugador estaba joineado (independientemente de que este en una partida o no)
-		if (self.player in gameSet.waiting_players or
-		(self.player and self.player.room_id in  gameSet.active_rooms)):
-			await gameSet.disconnectPlayer(self.player)
+		# if (self.player in gameSet.waiting_players or
+		# (self.player and self.player.room_id in  gameSet.active_rooms)):
+		await gameSet.disconnectPlayer(self.player)
 
 
 	async def receive(self, text_data):

@@ -68,8 +68,8 @@ class gameSetter:
 		if player in self.waiting_players:
 			self.waiting_players.remove(player)
 			print("el desconectado estaba esperando: ", player.id)
-
-		if player.room_id in self.active_rooms:
+			
+		elif player.room_id in self.active_rooms:
 
 			self.tasks[player.room_id].cancel()
 
@@ -112,4 +112,5 @@ class gameSetter:
 
 			self.active_rooms.pop(player.room_id, None)
 			#self.active_games.pop(player.room_id, None) # NO SE SI ES NECESARIO...
-			print("Active rooms:", self.active_rooms)
+			print("-- Active rooms:", self.active_rooms)
+			print("-- Active waiters", self.waiting_players)

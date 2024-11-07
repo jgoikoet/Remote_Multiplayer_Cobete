@@ -26,8 +26,8 @@ class gamePlayer:
 	async def play(self):
 		print("AKI PLAY")
 		while not self.player1.connect.start or not self.player2.connect.start:
-			print ("Player1 id:", self.player1.id, self.player1.connect.start)
-			print ("Player2 id:", self.player2.id, self.player2.connect.start)
+			# print ("Player1 id:", self.player1.id, self.player1.connect.start)
+			# print ("Player2 id:", self.player2.id, self.player2.connect.start)
 			#print("AKI mas PLAY")
 			if self.player1.connect.start == True and self.start == False:
 				#print("Player 1")
@@ -46,8 +46,8 @@ class gamePlayer:
 			# self.player1.start = True
 			# self.player2.start = True
 			await asyncio.sleep(0.001)
-		print ("Fuera Player1 id:", self.player1.id, self.player1.connect.start)
-		print ("Fuera Player2 id:", self.player2.id, self.player2.connect.start)
+		# print ("Fuera Player1 id:", self.player1.id, self.player1.connect.start)
+		# print ("Fuera Player2 id:", self.player2.id, self.player2.connect.start)
 		#print("Todo listo Calixto")
 		await map1Send(self.player1, self.player2)
 		await self.playing()
