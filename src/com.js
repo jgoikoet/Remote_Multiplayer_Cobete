@@ -42,24 +42,30 @@ export function connectSocket()
     
         const mensaje = JSON.parse(event.data);
         if (mensaje.type != 'refresh')
-        {
-            console.log("Mensaje del servidor:");
-            console.log("Type: ", mensaje.type);
-            if (mensaje.type == 'waiting')
-            posYR = mensaje.player1Y;
-            anguloR = mensaje.player1Angle;
-            posXB = mensaje.player2X;
-            posYB = mensaje.player2Y;
-            anguloB = mensaje.player2Angle;
-            motorROn = mensaje.player1Motor;
-            motorBOn = mensaje.player2Motor;
-            moveRedOn = mensaje.player1Move;
-            moveBlueOn = mensaje.player2Move;
-            weaponRedX = mensaje.player1WeaponX;
-            weaponRedY = mensaje.player1WeaponY;
-            weaponBlueX = mensaje.player2WeaponX;
-            weaponBlueY = mensaje.player2WeaponY;
-        }
+            {
+                console.log("Mensaje del servidor:");
+                console.log("Type: ", mensaje.type);
+                if (mensaje.type == 'waiting')
+                    console.log("Action: ", mensaje.action);
+            }
+    
+            if (mensaje.type == 'refresh')
+            {
+                posXR = mensaje.player1X;
+                posYR = mensaje.player1Y;
+                anguloR = mensaje.player1Angle;
+                posXB = mensaje.player2X;
+                posYB = mensaje.player2Y;
+                anguloB = mensaje.player2Angle;
+                motorROn = mensaje.player1Motor;
+                motorBOn = mensaje.player2Motor;
+                moveRedOn = mensaje.player1Move;
+                moveBlueOn = mensaje.player2Move;
+                weaponRedX = mensaje.player1WeaponX;
+                weaponRedY = mensaje.player1WeaponY;
+                weaponBlueX = mensaje.player2WeaponX;
+                weaponBlueY = mensaje.player2WeaponY;
+            }
         else if(mensaje.type == 'waiting')
         {
             waitingAction = mensaje.action;
@@ -78,7 +84,7 @@ export function connectSocket()
         if (event.wasClean) {
             console.log(`Conexión cerrada limpiamente, código: ${event.code}, motivo: ${event.reason}`);
         } else {
-            console.log("Conexión terminada");b
+            console.log("Conexión terminada");
         }
     };
     

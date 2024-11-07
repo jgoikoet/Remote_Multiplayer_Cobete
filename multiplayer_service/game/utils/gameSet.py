@@ -81,6 +81,8 @@ class gameSetter:
 
 				await self.addPlayer(self.active_rooms[player.room_id][1])
 
+				self.active_rooms[player.room_id][1].resetPlayer()
+
 				await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
 					'type': 'waiting',
 					'action': 'otherPlayerDisconnect'
@@ -95,6 +97,8 @@ class gameSetter:
 				self.active_rooms[player.room_id][0].connect.start = False
 
 				await self.addPlayer(self.active_rooms[player.room_id][0])
+
+				self.active_rooms[player.room_id][0].resetPlayer()
 
 				await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
 					'type': 'waiting',

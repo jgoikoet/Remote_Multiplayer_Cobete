@@ -222,7 +222,7 @@ export async function waiting()
 		printImages();
 		await pressSpace();
 		start();
-		refresh();
+		//refresh();
 	}
 	else if (waitingAction == 'blue')
 	{
@@ -230,7 +230,7 @@ export async function waiting()
 		printImages();
 		await pressSpace();
 		start();
-		refresh();
+		//refresh();
 	}
 	else if (waitingAction == 'ready')
 	{
@@ -289,13 +289,13 @@ export async function waiting()
 	{
 		imageOn = redWinner;
 		printImages();
-		refresh();
+		//refresh();
 	}
 	else if (waitingAction == 'blueWinGame')
 	{
 		imageOn = blueWinner;
 		printImages();
-		refresh();
+		//refresh();
 	}
 	else if (waitingAction == 'otherPlayerDisconnect')
 	{
@@ -398,14 +398,14 @@ function updateScore()
 
 export function terminateCobeteGame() {
 	
-	console.log("-----TERMINATE GAME--------")
+	//console.log("-----TERMINATE GAME--------")
 
 	document.removeEventListener('keydown', gameLoop);
 
-	window.removeEventListener('keydown', handleKeydown);
-    window.removeEventListener('keyup', handleKeyup);
-	window.addEventListener('keydown', handleKeydown);
-	window.addEventListener('keyup', handleKeyup);
+	// window.removeEventListener('keydown', handleKeydown);
+    // window.removeEventListener('keyup', handleKeyup);
+	// window.addEventListener('keydown', handleKeydown);
+	// window.addEventListener('keyup', handleKeyup);
 	
 	if (gameLoopId)
 		cancelAnimationFrame(gameLoopId);

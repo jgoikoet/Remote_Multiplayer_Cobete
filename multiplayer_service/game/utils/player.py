@@ -35,6 +35,26 @@ class players:
         elif message == 'motorOff':
             self.motor = False
 
+    def resetPlayer(self):
+
+        self.left = False
+        self.right = False
+        self.motor = False
+        self.fire = False
+        self.move = True
+        self.win = False
+        self.continueGame = False
+        self.points = 0
+
+        self.cobet.y = 570
+        self.cobet.angle = 0
+        self.cobet.speedX = 0
+        self.cobet.speedY = 0
+        self.cobet.weapon = False
+        self.cobet.weaponX = 0
+        self.cobet.weaponY = 0
+        self.cobet.weaponSpeedX = 0
+        self.cobet.weaponSpeedY = 0
     # def setId(self, id_mumber):
     #     self.id = id_mumber
 
