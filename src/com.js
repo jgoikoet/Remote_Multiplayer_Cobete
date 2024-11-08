@@ -2,7 +2,7 @@
 
 import { setImage, setMap, refresh, waiting } from "./cobeteGame.js";
 
-export let socket //= new WebSocket('ws://10.14.2.1:50002/ws/game/');
+export let socket;
 //const socket = new WebSocket('ws://127.0.0.1:50002/ws/game/');
 
 // const campoUserId = document.getElementById('user_id_txt_field');
@@ -93,65 +93,6 @@ export function connectSocket()
     };
 	
 }
-
-// socket.onopen = function(e) {
-//     console.log("Conectado al WebSocket");
-// };
-
-// socket.onmessage = function(event) {
-
-//     const mensaje = JSON.parse(event.data);
-//     if (mensaje.type != 'refresh')
-//     {
-//         console.log("Mensaje del servidor:");
-//         console.log("Type: ", mensaje.type);
-//         if (mensaje.type == 'waiting')
-//             console.log("Action: ", mensaje.action);
-//     }
-        
-
-//     if (mensaje.type == 'refresh')
-//     {
-//         posXR = mensaje.player1X;
-//         posYR = mensaje.player1Y;
-//         anguloR = mensaje.player1Angle;
-//         posXB = mensaje.player2X;
-//         posYB = mensaje.player2Y;
-//         anguloB = mensaje.player2Angle;
-//         motorROn = mensaje.player1Motor;
-//         motorBOn = mensaje.player2Motor;
-//         moveRedOn = mensaje.player1Move;
-//         moveBlueOn = mensaje.player2Move;
-//         weaponRedX = mensaje.player1WeaponX;
-//         weaponRedY = mensaje.player1WeaponY;
-//         weaponBlueX = mensaje.player2WeaponX;
-//         weaponBlueY = mensaje.player2WeaponY;
-//     }
-//     else if(mensaje.type == 'waiting')
-//     {
-//         waitingAction = mensaje.action;
-//         waiting();
-//     }
-//     else if(mensaje.type == 'press_to_start')
-//     {
-//         console.log("color: ", mensaje.color)
-//         setImage(mensaje.color)
-//     }
-//     else if (mensaje.type == 'map')
-//         setMap(mensaje);
-// };
-
-// socket.onclose = function(event) {
-//     if (event.wasClean) {
-//         console.log(`Conexión cerrada limpiamente, código: ${event.code}, motivo: ${event.reason}`);
-//     } else {
-//         console.log("Conexión terminada");
-//     }
-// };
-
-// socket.onerror = function(error) {
-//     console.log("Error en el WebSocket", error);
-// };
 
 export async function button(b)
 {

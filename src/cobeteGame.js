@@ -123,44 +123,7 @@ export function initializeCobeteGame() {
 
 	window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
-
-	//inializeEventListener();
-	// window.addEventListener('keydown', (event) => {
-	// 	if (event.key === 'a' && left === false) {
-	// 		button('leftOn');
-	// 		left = true;
-	// 	}
-	// 	if (event.key === 's' && right === false) {
-	// 		button('rightOn');
-	// 		right = true;
-	// 	}
-	// 	if (event.key === 'd' && motor === false) {
-	// 		button('motorOn');
-	// 		motor = true;
-	// 	}
-	// 	if (event.key === 'f') {
-	// 		button('fire');
-	// 	}
-	// });
 	
-	// window.addEventListener('keyup', (event) => {
-	// 	if (event.key === 'a') {
-	// 		button('leftOff');
-	// 		left = false;
-	// 	}
-	// 	if (event.key === 's') {
-	// 		button('rightOff');
-	// 		right = false;
-	// 	}
-	// 	if (event.key === 'd') {
-	// 		button('motorOff');
-	// 		motor = false;
-	// 	}
-	// });
-
-	// const h1Element = document.querySelector('#pong-container h1');
-	//   // Cambia el texto del h1
-	// h1Element.textContent = 'Online Multiplayer';
     gameLoop();
 }
 
@@ -286,20 +249,36 @@ export async function waiting()
 		continueGame();
 	}
 	else if (waitingAction == 'redWinGame')
-	{
+	{	
+		player1Points += 1;
+		updateScore();
 		imageOn = redWinner;
 		printImages();
+		player1Points = 0;
+		player2Points = 0;
+		await pressSpace();
+		start();
+		updateScore();
 		//refresh();
 	}
 	else if (waitingAction == 'blueWinGame')
 	{
+		player2Points =+ 1;
+		updateScore();
 		imageOn = blueWinner;
 		printImages();
+		player1Points = 0;
+		player2Points = 0;
+		await pressSpace();
+		start();
+		updateScore();
 		//refresh();
 	}
 	else if (waitingAction == 'otherPlayerDisconnect')
 	{
-		showMessage('Error: The other player has disconnected\n(Maybe dead, maybe tomando cañas)', 'red')
+		showMessage('Error: The other player has disconnected\n(Maybe dead, maybe tomando cañas)', 'red');
+		player1Points = 0;
+		player2Points = 0;
 		imageOn = imgWaiting;
 		terminateCobeteGame();
 		//refresh();

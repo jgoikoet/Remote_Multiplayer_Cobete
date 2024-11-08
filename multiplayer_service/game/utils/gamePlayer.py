@@ -26,8 +26,8 @@ class gamePlayer:
 	async def play(self):
 		print("AKI PLAY")
 		while not self.player1.connect.start or not self.player2.connect.start:
-			# print ("Player1 id:", self.player1.id, self.player1.connect.start)
-			# print ("Player2 id:", self.player2.id, self.player2.connect.start)
+			print ("Player1 id:", self.player1.id, self.player1.connect.start)
+			print ("Player2 id:", self.player2.id, self.player2.connect.start)
 			#print("AKI mas PLAY")
 			if self.player1.connect.start == True and self.start == False:
 				#print("Player 1")
@@ -50,13 +50,14 @@ class gamePlayer:
 		# print ("Fuera Player2 id:", self.player2.id, self.player2.connect.start)
 		#print("Todo listo Calixto")
 		await map1Send(self.player1, self.player2)
+		self.playOn = True
 		await self.playing()
 		# while(self.playing):
 		# 	if self.init:
 				
 	async def playing(self):
 		#print ("A jueba!")
-		#playing = True
+		#self.playOn = True
 		await self.crash.setList()
 		while(self.playOn):
 
@@ -118,9 +119,16 @@ class gamePlayer:
 			#print ("A juebando!")
 
 	async def gameEnd(self):
-		
+		self.crash.mapOn = map1
+		self.player1.connect.start = False
+		self.player2.connect.start = False
+		# SAVEGAME momento de mandar los datos de la partida a la bbdd (justo antes de resetear)
+		self.player1.points = 0
+		self.player2.points = 0
 		self.playOn = False
-		return
+		self.start = False
+		await self.resetGame()
+		await self.play()
 
 	async def winner(self):
 
@@ -158,6 +166,7 @@ class gamePlayer:
 					'action': 'redWinGame'
 				}))
 				await self.gameEnd()
+				return
 			else:
 				await self.player1.connect.send(text_data=json.dumps({
 					'type': 'waiting',
@@ -196,6 +205,7 @@ class gamePlayer:
 					'action': 'blueWinGame'
 				}))
 				await self.gameEnd()
+				return
 			else:
 				await self.player1.connect.send(text_data=json.dumps({
 					'type': 'waiting',
@@ -233,23 +243,6 @@ class gamePlayer:
 			
 		await self.resetGame()
 
-
-		# self.player1.cobet.x = 40
-		# self.player1.cobet.y = 570
-		# self.player2.cobet.x = 660
-		# self.player2.cobet.y = 570
-		# self.player1.cobet.speedX = 0
-		# self.player1.cobet.speedY = 0
-		# self.player2.cobet.speedX = 0
-		# self.player2.cobet.speedY = 0
-		# self.player1.cobet.angle = 0
-		# self.player2.cobet.angle = 0
-		# self.player1.move = True
-		# self.player2.move = True
-		# self.player1.win = False
-		# self.player2.win = False
-		# self.player1.continueGame = False
-		# self.player2.continueGame = False
 
 	async def resetGame(self):
 		print("RESET GAMEEEEE")
