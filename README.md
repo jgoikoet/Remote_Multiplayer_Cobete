@@ -8,7 +8,7 @@ Para usar el proyecto hay que instalar los paquetes `channels` y `daphne` de pyt
 pip install channels daphne
 ```
 
-## Ejecutar el servidor
+## Ejecutar el servidora
 
 Para ejecutar el servidor hay que posicionarse en la carpeta del proyecto de Django `multiplayer_service` y lanzar el siguiente comando:
 
