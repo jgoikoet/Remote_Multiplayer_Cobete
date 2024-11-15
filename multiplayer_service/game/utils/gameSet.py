@@ -21,7 +21,8 @@ class gameSetter:
 
 		await player.connect.send(text_data=json.dumps({
 			'type': 'waiting',
-			'action': 'waitForPlayer'
+			'action': 'waitForPlayer',
+			'name': player.display_name
 		}))
 
 
@@ -55,11 +56,15 @@ class gameSetter:
 
 		await player1.connect.send(text_data=json.dumps({
 			'type': 'waiting',
-			'action': 'red'
+			'action': 'red',
+			'player1Name': player1.display_name,
+			'player2Name': player2.display_name
 		}))
 		await player2.connect.send(text_data=json.dumps({
 			'type': 'waiting',
-			'action': 'blue'
+			'action': 'blue',
+			'player1Name': player1.display_name,
+			'player2Name': player2.display_name
 		}))
 
 	

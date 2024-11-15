@@ -25,7 +25,8 @@ class gamePlayer:
 		self.playOn = True
 	
 		#self.init = True
-		
+	
+
 	async def play(self):
 		print("AKI PLAY")
 		while not self.player1.connect.start or not self.player2.connect.start:
