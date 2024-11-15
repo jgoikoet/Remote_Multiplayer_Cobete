@@ -1,6 +1,21 @@
 import json
 import time
 import asyncio
+
+
+
+#aqui toco
+import jwt
+import logging  
+
+from django.conf import settings
+from datetime import datetime
+
+
+logger = logging.getLogger(__name__) 
+
+#fin aqui toco
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from .utils.player import players
@@ -20,6 +35,19 @@ gameSet = gameSetter()
 
 class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 
+
+	#aqui toco
+
+	def decode_jwt_token(self, token):
+		try:
+			# Decodifica el token usando la clave secreta de Django
+			payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+			return payload
+		except Exception as e:
+			print(f"Error decodificando token: {str(e)}")
+			return None
+
+	#fin aqui toco
 
 	async def connect(self):
 		"""Cuando un cliente se conecta al WebSocket."""
@@ -48,7 +76,18 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 			self.player.handleMoveMessage(message_action)
 		elif message_type == 'join_game':
 			self.start = False
-			self.player = players(self, id)
+			logger.error(f"Datos ID: {data}")
+	        #aqui toco			
+			id =  await self.handle_action_join_game(data)
+			display_name =  await self.handle_action_join_game_display_name(data)			
+			logger.info(f"display_name: {display_name}")
+			logger.error(f"User ID: {id}")
+			self.player = players(self, id ,display_name)
+			#			self.player = players(self, id)		
+            #			await self.handle_action_join_game(data)
+
+
+
 			print("Ha hecho join", self.player.id)
 			id += 1
 			await gameSet.addPlayer(self.player)
@@ -74,6 +113,41 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		# 		'type': 'error',
 		# 		'message': "Bad request, parameter 'type' is mandatory"
 		# 	}))
+
+
+	async def handle_action_join_game(self, data):
+		# Verificar que el token existe
+		id = 0
+		if 'token' not in data:
+			return id
+
+		payload = self.decode_jwt_token(data['token'])
+		if payload is None:
+			return id
+		logger.error(f"Payload: {payload}")
+		logger.error(f"Payload User:id: {payload.get('user_id')}")
+		id = payload.get('user_id')
+
+		return id
+	#fin aqui toco
+
+	async def handle_action_join_game_display_name(self, data):
+		# Verificar que el token existe
+		display_name = ""
+		if 'token' not in data:
+			return display_name
+
+		payload = self.decode_jwt_token(data['token'])
+
+		if payload is None:
+			return display_name
+
+		logger.error(f"Payload display: {payload}")
+		logger.error(f"Payload User:display_name: {payload.get('display_name')}")
+
+		display_name = payload.get('display_name', "")
+
+		return display_name
 
 	#async def handle_action_join_game(self, data):
 		# global id

@@ -3,9 +3,12 @@ from .cobete import cobete
 
 class players:
 
-    def __init__(self, connection, id_mumber):
+    #aqui toco display_name
+
+    def __init__(self, connection, id_mumber, display_name):
         self.connect = connection
         self.id = id_mumber
+        self.display_name = display_name
         self.cobet = cobete()
         self.room_id = 0
         self.points = 0
