@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os  # Operating system interface
+from pathlib import Path  # Object-oriented filesystem paths
+from datetime import timedelta  # Duration of time
 
-from pathlib import Path
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k2f=v91@^$l33)#uzr-6h)fp!$bl^$omqp_*f1z5wa^c)q1)s3'
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'en la playa se esta mejor que aqui')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

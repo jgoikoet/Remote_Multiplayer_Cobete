@@ -5,6 +5,9 @@ import math
 from .maps import map1Send, map2Send, map3Send
 from .colision import colision
 from .maps import map1, map2, map3
+import logging  
+logger = logging.getLogger(__name__) 
+
 
 class gamePlayer:
 	def __init__(self, player1, player2):
@@ -26,8 +29,8 @@ class gamePlayer:
 	async def play(self):
 		print("AKI PLAY")
 		while not self.player1.connect.start or not self.player2.connect.start:
-			print ("Player1 id:", self.player1.id, self.player1.connect.start)
-			print ("Player2 id:", self.player2.id, self.player2.connect.start)
+			#print ("Player1 id:", self.player1.id, self.player1.connect.start)
+			#print ("Player2 id:", self.player2.id, self.player2.connect.start)
 			#print("AKI mas PLAY")
 			if self.player1.connect.start == True and self.start == False:
 				#print("Player 1")
@@ -119,6 +122,33 @@ class gamePlayer:
 			#print ("A juebando!")
 
 	async def gameEnd(self):
+
+
+		if self.player1.points > self.player2.points:
+			winner = self.player1.id
+		else:
+			winner = self.player2.id
+		
+		# SAVEGAME momento de mandar los datos de la partida a la bbdd (justo antes de resetear)
+		data = {
+			"player1_id": self.player1.id,
+			"player2_id": self.player2.id,
+			"player1_display_name": self.player1.display_name,
+			"player2_display_name": self.player2.display_name,
+			"player1_score": self.player1.points,
+			"player2_score": self.player2.points,
+			"match_type": 0,
+			"winner_id": winner,
+			"tournament_id": 0,
+		}
+		
+		#print (data)
+
+		logger.error("Game ended, sending data to savegame", extra=data)
+		
+		#await queue_message(os.getenv("RABBITMQ_PONG_MATCH_QUEUE"), data)
+
+
 		self.crash.mapOn = map1
 		self.player1.connect.start = False
 		self.player2.connect.start = False
@@ -269,6 +299,8 @@ class gamePlayer:
 			'type': 'refresh',
 			'player1X': self.player1.cobet.x,
 			'player1Y': self.player1.cobet.y,
+			'player1Display_name': self.player1.display_name,
+			'player2Display_name': self.player2.display_name,			
 			'player1Angle': self.player1.cobet.angle,
 			'player1Motor': self.player1.motor,
 			'player1Move': self.player1.move,
@@ -285,6 +317,8 @@ class gamePlayer:
 		}))
 		await self.player2.connect.send(text_data=json.dumps({
 			'type': 'refresh',
+			'player1Display_name': self.player1.display_name,
+			'player2Display_name': self.player2.display_name,				
 			'player1X': self.player1.cobet.x,
 			'player1Y': self.player1.cobet.y,
 			'player1Angle': self.player1.cobet.angle,
