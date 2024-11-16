@@ -1,11 +1,14 @@
 import json
 import asyncio
 import math
+import logging
+from asgiref.sync import sync_to_async
 
 from .maps import map1Send, map2Send, map3Send
 from .colision import colision
 from .maps import map1, map2, map3
-import logging  
+from ..models import Match
+
 logger = logging.getLogger(__name__) 
 
 
@@ -138,17 +141,10 @@ class gamePlayer:
 			"player2_display_name": self.player2.display_name,
 			"player1_score": self.player1.points,
 			"player2_score": self.player2.points,
-			"match_type": 0,
-			"winner_id": winner,
-			"tournament_id": 0,
+			"winner_id": winner
 		}
 		
-		#print (data)
-
-		logger.error("Game ended, sending data to savegame", extra=data)
-		
-		#await queue_message(os.getenv("RABBITMQ_PONG_MATCH_QUEUE"), data)
-
+		await sync_to_async(Match.objects.create)(**data)
 
 		self.crash.mapOn = map1
 		self.player1.connect.start = False
