@@ -36,6 +36,8 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 	async def disconnect(self, close_code):
 		"""Cuando el cliente se desconecta."""
 		print("Entrada en desconexion")
+		
+		logger.error(f"Disconected Player: {self.player}")
 		await gameSet.disconnectPlayer(self.player)
 
 	async def receive(self, text_data):
