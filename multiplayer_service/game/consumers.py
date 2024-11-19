@@ -62,6 +62,7 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		# Si el jugador estaba joineado (independientemente de que este en una partida o no)
 		# if (self.player in gameSet.waiting_players or
 		# (self.player and self.player.room_id in  gameSet.active_rooms)):
+		logger.error(f"Disconected Player: {self.player}")
 		await gameSet.disconnectPlayer(self.player)
 
 

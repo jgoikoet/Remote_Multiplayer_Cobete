@@ -149,7 +149,6 @@ class gamePlayer:
 		self.crash.mapOn = map1
 		self.player1.connect.start = False
 		self.player2.connect.start = False
-		# SAVEGAME momento de mandar los datos de la partida a la bbdd (justo antes de resetear)
 		self.player1.points = 0
 		self.player2.points = 0
 		self.playOn = False
