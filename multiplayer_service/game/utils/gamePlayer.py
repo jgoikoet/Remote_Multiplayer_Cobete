@@ -33,38 +33,24 @@ class gamePlayer:
 	async def play(self):
 		print("AKI PLAY")
 		while not self.player1.connect.start or not self.player2.connect.start:
-			#print ("Player1 id:", self.player1.id, self.player1.connect.start)
-			#print ("Player2 id:", self.player2.id, self.player2.connect.start)
-			#print("AKI mas PLAY")
 			if self.player1.connect.start == True and self.start == False:
-				#print("Player 1")
 				await self.player1.connect.send(text_data=json.dumps({
 				'type': 'waiting',
 				'action': 'ready'
 				}))
 				self.start = True
 			if self.player2.connect.start == True and self.start == False:
-				#print("Player 2")
 				await self.player2.connect.send(text_data=json.dumps({
 				'type': 'waiting',
 				'action': 'ready'
 				}))
 				self.start = True
-			# self.player1.start = True
-			# self.player2.start = True
 			await asyncio.sleep(0.001)
-		# print ("Fuera Player1 id:", self.player1.id, self.player1.connect.start)
-		# print ("Fuera Player2 id:", self.player2.id, self.player2.connect.start)
-		#print("Todo listo Calixto")
 		await map1Send(self.player1, self.player2)
 		self.playOn = True
 		await self.playing()
-		# while(self.playing):
-		# 	if self.init:
 				
 	async def playing(self):
-		#print ("A jueba!")
-		#self.playOn = True
 		await self.crash.setList()
 		while(self.playOn):
 
@@ -86,7 +72,7 @@ class gamePlayer:
 				self.player2.cobet.speedX += (math.sin(math.radians(self.player2.cobet.angle))) * self.speedIncrement
 				self.player2.cobet.speedY += (-math.cos(math.radians(self.player2.cobet.angle))) * self.speedIncrement
 
-			if self.player1.fire == True and self.player1.cobet.weapon == False: # disparo rojo
+			if self.player1.fire == True and self.player1.cobet.weapon == False: 
 				self.player1.fire = False
 				self.player1.cobet.weapon = True
 				self.player1.cobet.weaponX = self.player1.cobet.x
@@ -95,7 +81,7 @@ class gamePlayer:
 				self.player1.cobet.weaponSpeedY = (-math.cos(math.radians(self.player1.cobet.angle))) * self.player1.cobet.weaponTotalSpeed
 
 
-			if self.player2.fire == True and self.player2.cobet.weapon == False: # disparo azul
+			if self.player2.fire == True and self.player2.cobet.weapon == False: 
 				self.player2.fire = False
 				self.player2.cobet.weapon = True
 				self.player2.cobet.weaponX = self.player2.cobet.x
@@ -123,8 +109,7 @@ class gamePlayer:
 				await self.winner()
 
 			await asyncio.sleep(0.010)
-			#print ("A juebando!")
-
+			
 	async def gameEnd(self):
 
 
@@ -133,7 +118,6 @@ class gamePlayer:
 		else:
 			winner = self.player2.id
 		
-		# SAVEGAME momento de mandar los datos de la partida a la bbdd (justo antes de resetear)
 		data = {
 			"player1_id": self.player1.id,
 			"player2_id": self.player2.id,
@@ -244,7 +228,6 @@ class gamePlayer:
 
 
 		while self.player1.continueGame == False or self.player2.continueGame == False:
-			# print(self.player2.continueGame)
 			if self.player1.continueGame:
 				await self.player1.connect.send(text_data=json.dumps({
 				'type': 'waiting',
@@ -271,7 +254,6 @@ class gamePlayer:
 
 
 	async def resetGame(self):
-		print("RESET GAMEEEEE")
 		self.player1.cobet.x = 40
 		self.player1.cobet.y = 570
 		self.player2.cobet.x = 660
