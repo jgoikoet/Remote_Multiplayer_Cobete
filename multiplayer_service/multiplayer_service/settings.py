@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'en la playa se esta mejor que aqui')
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -140,18 +140,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "https://127.0.0.1:49999",
-    "https://localhost:49999",
-	"https://127.0.0.1:49998",
-    "https://localhost:49998"
-]
-CORS_ORIGIN_ALLOW_ALL = True 
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = [
-    "https://127.0.0.1:49999",
-    "https://localhost:49999",
-	"https://127.0.0.1:49998",
-    "https://localhost:49998"
-]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = []
+CORS_ORIGIN_WHITELIST = []
