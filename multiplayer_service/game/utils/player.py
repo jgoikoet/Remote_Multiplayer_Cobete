@@ -3,8 +3,6 @@ from .cobete import cobete
 
 class players:
 
-    #aqui toco display_name
-
     def __init__(self, connection, id_mumber, display_name):
         self.connect = connection
         self.id = id_mumber
@@ -58,8 +56,3 @@ class players:
         self.cobet.weaponY = 0
         self.cobet.weaponSpeedX = 0
         self.cobet.weaponSpeedY = 0
-    # def setId(self, id_mumber):
-    #     self.id = id_mumber
-
-    # def sendMessage(self):
-    #     print("Voy a mandar mensajito")

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes  # Decorators for API views
-from rest_framework_simplejwt.authentication import JWTAuthentication  # JWT authentication backend
+from rest_framework.decorators import api_view, authentication_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication 
 
 from . import views_match_history
 
