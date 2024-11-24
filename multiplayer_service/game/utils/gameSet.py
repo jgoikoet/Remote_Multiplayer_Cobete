@@ -46,7 +46,7 @@ class gameSetter:
                 p_played = await sync_to_async(p_matches.count)()
                 p_won = await sync_to_async(p_matches.filter(winner_id=p.id).count)()
                 p_win_percentage = (p_won / p_played) * 100 if p_played > 0 else 0
-                if abs(p_played - individual_played) <= 5 or abs(p_win_percentage - win_percentage) <= 25:
+                if p_played < 5 or individual_played < 5 or abs(p_win_percentage - win_percentage) <= 25:
                     self.waiting_players.remove(p)
                     self.waiting_players.remove(player)
                     room_id = f"room_{player.id}_{p.id}"
