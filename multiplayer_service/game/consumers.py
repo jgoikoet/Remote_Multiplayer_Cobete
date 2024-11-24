@@ -41,7 +41,7 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		elif message_type == 'join_game':
 			self.start = False
 			id =  await self.handle_action_join_game(data)
-			display_name =  await self.handle_action_join_game_display_name(data)			
+			display_name =  await self.handle_action_join_game_display_name(data)
 			self.player = players(self, id ,display_name)
 			id += 1
 			await gameSet.addPlayer(self.player)
