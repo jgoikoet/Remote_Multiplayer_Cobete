@@ -22,6 +22,11 @@ class gameSetter:
 
     async def addPlayer(self, player):
         
+        logger.info(F"--------{player.display_name} {player.id} ENTRA EN addPlayer--------")
+
+        for roomID in self.active_rooms:
+            logger.info(f"al entrar en addPlayer roomID: {roomID}")
+
         if player.id in self.connected_players:
             self.connected_players.append(player.id)
             await player.connect.send(text_data=json.dumps({
@@ -29,6 +34,9 @@ class gameSetter:
                 'action': 'duplicated',
             }))
             return
+
+        for p in self.waiting_players:
+            logger.info(f"waiting players pre-append ID: {p.id}")
 
         self.connected_players.append(player.id)
         self.waiting_players.append(player)
@@ -38,8 +46,10 @@ class gameSetter:
         individual_played = await sync_to_async(individual_matches.count)()
         individual_won = await sync_to_async(individual_matches.filter(winner_id=player.id).count)()
         win_percentage = (individual_won / individual_played) * 100 if individual_played > 0 else 0
+
         for p in self.waiting_players:
-            logger.info(f"waiting players ID: {p.id}")
+            logger.info(f"waiting players post-append ID: {p.id}")
+
         await player.connect.send(text_data=json.dumps({
             'type': 'waiting',
             'action': 'waitForPlayer',
@@ -48,6 +58,7 @@ class gameSetter:
             'won': individual_won
         }))
         if len(self.waiting_players) >= 2:
+            logger.info("-----hay 2 o mas jugadores-------")
             for p in self.waiting_players:
                 if p == player:
                     continue
@@ -72,6 +83,9 @@ class gameSetter:
                     break
 
     async def sendWaitingMessage(self, player1, player2):
+
+        logger.info(f"sendWaitingMessage----player1: {player1.display_name} {player1.id} player2: {player2.display_name} {player2.id}")
+
         await player1.connect.send(text_data=json.dumps({
             'type': 'waiting',
             'action': 'red',
@@ -90,55 +104,60 @@ class gameSetter:
 
         logger.info("---PASO POR AQUI-------")
 
+
         if player.id in self.connected_players:
             logger.info(F"SE DESCONECTA {player.display_name} {player.id}")
             self.connected_players.remove(player.id)
 
         for roomID in self.active_rooms:
-            logger.info(f"roomID: {roomID}")
+            logger.info(f"al entrar e disconectPlayer roomID: {roomID}")
 
         try:
 
             if player in self.waiting_players:
                 self.waiting_players.remove(player)
                 
-            elif player.room_id in self.active_rooms:
+            if player.room_id in self.active_rooms:
+                room = self.active_rooms[player.room_id]
+                self.active_rooms.pop(player.room_id, None)
                 #active_rooms.pop(player.room_id)
                 logger.info(f"desconectado: {player.display_name}, ID: {player.id}")
                 self.tasks[player.room_id].cancel()
-                if self.active_rooms[player.room_id][0] ==  player:
-                    self.active_rooms[player.room_id][1].connect.start = False
-                    if self.active_rooms[player.room_id][1].id in self.connected_players:
-                        self.connected_players.remove(self.active_rooms[player.room_id][1].id)
-                    await self.addPlayer(self.active_rooms[player.room_id][1])
-                    self.active_rooms[player.room_id][1].resetPlayer()
-                    await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
+                if room[0] ==  player:
+                    room[1].connect.start = False
+                    if room[1].id in self.connected_players:
+                        self.connected_players.remove(room[1].id)
+                    room[1].resetPlayer()
+                    await room[1].connect.send(text_data=json.dumps({
                         'type': 'waiting',
                         'action': 'otherPlayerDisconnect'
                     }))
                     await asyncio.sleep(3)
-                    if not self.active_rooms[player.room_id][1].continueGame:
-                        await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
+                    if not room[1].continueGame:
+                        await room[1].connect.send(text_data=json.dumps({
                             'type': 'waiting',
                             'action': 'waitForPlayer'
                         }))
+                    await self.addPlayer(room[1])
                 else:
-                    self.active_rooms[player.room_id][0].connect.start = False
-                    if self.active_rooms[player.room_id][0].id in self.connected_players:
-                        self.connected_players.remove(self.active_rooms[player.room_id][0].id)
-                    await self.addPlayer(self.active_rooms[player.room_id][0])
-                    self.active_rooms[player.room_id][0].resetPlayer()
-                    await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
+                    room[0].connect.start = False
+                    if room[0].id in self.connected_players:
+                        self.connected_players.remove(room[0].id)
+                    room[0].resetPlayer()
+                    await room[0].connect.send(text_data=json.dumps({
                         'type': 'waiting',
                         'action': 'otherPlayerDisconnect'
                     }))
                     await asyncio.sleep(3)
-                    if not self.active_rooms[player.room_id][0].continueGame:
-                        await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
+                    if not room[0].continueGame:
+                        await room[0].connect.send(text_data=json.dumps({
                             'type': 'waiting',
                             'action': 'waitForPlayer'
                         }))
-                # self.active_rooms.pop(player.room_id, None)
+                    await self.addPlayer(room[0])
+                # if player.room_id in self.active_rooms:
+                #     logger.info("-------------BORRAMOS ROOM----------------")
+                #     self.active_rooms.pop(player.room_id, None)
 
             logger.info("---PASO POR AQUI ENDESPUE-------")
 
