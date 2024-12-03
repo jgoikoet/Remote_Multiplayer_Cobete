@@ -29,7 +29,9 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		self.player = None
 
 	async def disconnect(self, close_code):
+		logger.info(f"disconnect {self.player.display_name} {self.player.id}")
 		await gameSet.disconnectPlayer(self.player)
+		logger.info("------HA VUELTO--------")
 
 	async def receive(self, text_data):
 		global id
