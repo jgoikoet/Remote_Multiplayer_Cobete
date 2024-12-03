@@ -20,6 +20,38 @@ class gameSetter:
 
 
     async def addPlayer(self, player):
+        
+        # self.waiting_players.append(player)
+
+        # await player.connect.send(text_data=json.dumps({
+        #     'type': 'waiting',
+        #     'action': 'waitForPlayer'
+        # }))
+
+        # if len(self.waiting_players) >= 2:
+        #     player1 = self.waiting_players.pop(0)
+        #     player2 = self.waiting_players.pop(0)
+        #     room_id = f"room_{player1.id}_{player2.id}"
+        #     player1.room_id = room_id
+        #     player2.room_id = room_id
+        #     game = gamePlayer(player1, player2)
+        #     self.active_rooms[room_id] = [player1, player2]
+        #     self.active_games[room_id] = game
+        
+        #     await self.sendWaitingMessage(player1, player2)
+        
+        #     task = asyncio.create_task(game.play())
+        
+        #     self.tasks[room_id] = task
+
+		# for p in self.waiting_players:
+		# 	print("waiting players endespues:", p.id)
+		# for r in self.active_rooms.keys():
+		# 	print("active room id: ", r)
+		# for r in self.active_rooms.values():
+		# 	print("players in active room:", r[0].id, "  ", r[1].id)
+        # looger.info("ALGO")
+        logger.info("-----HABEMOS ENTRAO EN addPlayer-----")
 
         self.waiting_players.append(player)
         individual_matches = await sync_to_async(Match.objects.filter)(
@@ -28,7 +60,7 @@ class gameSetter:
         individual_won = await sync_to_async(individual_matches.filter(winner_id=player.id).count)()
         win_percentage = (individual_won / individual_played) * 100 if individual_played > 0 else 0
         for p in self.waiting_players:
-            logger.info(f"waiting players antes: {p.id}")
+            logger.info(f"waiting players ID: {p.id}")
         await player.connect.send(text_data=json.dumps({
             'type': 'waiting',
             'action': 'waitForPlayer',
@@ -77,35 +109,51 @@ class gameSetter:
     
     async def disconnectPlayer(self, player):
 
-        if player in self.waiting_players:
-            self.waiting_players.remove(player)
-            
-        elif player.room_id in self.active_rooms:
-            self.tasks[player.room_id].cancel()
-            if self.active_rooms[player.room_id][0] ==  player:
-                self.active_rooms[player.room_id][1].connect.start = False
-                await self.addPlayer(self.active_rooms[player.room_id][1])
-                self.active_rooms[player.room_id][1].resetPlayer()
-                await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
-                    'type': 'waiting',
-                    'action': 'otherPlayerDisconnect'
-                }))
-                await asyncio.sleep(3)
-                await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
-                    'type': 'waiting',
-                    'action': 'waitForPlayer'
-                }))
-            else:
-                self.active_rooms[player.room_id][0].connect.start = False
-                await self.addPlayer(self.active_rooms[player.room_id][0])
-                self.active_rooms[player.room_id][0].resetPlayer()
-                await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
-                    'type': 'waiting',
-                    'action': 'otherPlayerDisconnect'
-                }))
-                await asyncio.sleep(3)
-                await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
-                    'type': 'waiting',
-                    'action': 'waitForPlayer'
-                }))
-            self.active_rooms.pop(player.room_id, None)
+        logger.info("---PASO POR AQUI-------")
+
+        for roomID in self.active_rooms:
+            logger.info(f"roomID: {roomID}")
+
+        try:
+
+            if player in self.waiting_players:
+                self.waiting_players.remove(player)
+                
+            elif player.room_id in self.active_rooms:
+                #active_rooms.pop(player.room_id)
+                logger.info(f"desconectado: {player.display_name}, ID: {player.id}")
+                self.tasks[player.room_id].cancel()
+                if self.active_rooms[player.room_id][0] ==  player:
+                    self.active_rooms[player.room_id][1].connect.start = False
+                    await self.addPlayer(self.active_rooms[player.room_id][1])
+                    self.active_rooms[player.room_id][1].resetPlayer()
+                    await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
+                        'type': 'waiting',
+                        'action': 'otherPlayerDisconnect'
+                    }))
+                    await asyncio.sleep(3)
+                    if not self.active_rooms[player.room_id][1].continueGame:
+                        await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
+                            'type': 'waiting',
+                            'action': 'waitForPlayer'
+                        }))
+                else:
+                    self.active_rooms[player.room_id][0].connect.start = False
+                    await self.addPlayer(self.active_rooms[player.room_id][0])
+                    self.active_rooms[player.room_id][0].resetPlayer()
+                    await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
+                        'type': 'waiting',
+                        'action': 'otherPlayerDisconnect'
+                    }))
+                    await asyncio.sleep(3)
+                    if not self.active_rooms[player.room_id][0].continueGame:
+                        await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
+                            'type': 'waiting',
+                            'action': 'waitForPlayer'
+                        }))
+                # self.active_rooms.pop(player.room_id, None)
+
+            logger.info("---PASO POR AQUI ENDESPUE-------")
+
+        except Exception as e:
+            logger.error(f"Error en disconnectPlayer: {e}")
