@@ -91,6 +91,7 @@ class gameSetter:
         logger.info("---PASO POR AQUI-------")
 
         if player.id in self.connected_players:
+            logger.info(F"SE DESCONECTA {player.display_name} {player.id}")
             self.connected_players.remove(player.id)
 
         for roomID in self.active_rooms:
@@ -107,6 +108,8 @@ class gameSetter:
                 self.tasks[player.room_id].cancel()
                 if self.active_rooms[player.room_id][0] ==  player:
                     self.active_rooms[player.room_id][1].connect.start = False
+                    if self.active_rooms[player.room_id][1].id in self.connected_players:
+                        self.connected_players.remove(self.active_rooms[player.room_id][1].id)
                     await self.addPlayer(self.active_rooms[player.room_id][1])
                     self.active_rooms[player.room_id][1].resetPlayer()
                     await self.active_rooms[player.room_id][1].connect.send(text_data=json.dumps({
@@ -121,6 +124,8 @@ class gameSetter:
                         }))
                 else:
                     self.active_rooms[player.room_id][0].connect.start = False
+                    if self.active_rooms[player.room_id][0].id in self.connected_players:
+                        self.connected_players.remove(self.active_rooms[player.room_id][0].id)
                     await self.addPlayer(self.active_rooms[player.room_id][0])
                     self.active_rooms[player.room_id][0].resetPlayer()
                     await self.active_rooms[player.room_id][0].connect.send(text_data=json.dumps({
