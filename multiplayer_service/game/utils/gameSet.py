@@ -14,6 +14,7 @@ class gameSetter:
 
     def __init__(self):
         self.waiting_players = []
+        self.connected_players = []
         self.active_rooms= {} 
         self.active_games = {}
         self.tasks = {}
@@ -21,39 +22,17 @@ class gameSetter:
 
     async def addPlayer(self, player):
         
-        # self.waiting_players.append(player)
+        if player.id in self.connected_players:
+            self.connected_players.append(player.id)
+            await player.connect.send(text_data=json.dumps({
+                'type': 'waiting',
+                'action': 'duplicated',
+            }))
+            return
 
-        # await player.connect.send(text_data=json.dumps({
-        #     'type': 'waiting',
-        #     'action': 'waitForPlayer'
-        # }))
-
-        # if len(self.waiting_players) >= 2:
-        #     player1 = self.waiting_players.pop(0)
-        #     player2 = self.waiting_players.pop(0)
-        #     room_id = f"room_{player1.id}_{player2.id}"
-        #     player1.room_id = room_id
-        #     player2.room_id = room_id
-        #     game = gamePlayer(player1, player2)
-        #     self.active_rooms[room_id] = [player1, player2]
-        #     self.active_games[room_id] = game
-        
-        #     await self.sendWaitingMessage(player1, player2)
-        
-        #     task = asyncio.create_task(game.play())
-        
-        #     self.tasks[room_id] = task
-
-		# for p in self.waiting_players:
-		# 	print("waiting players endespues:", p.id)
-		# for r in self.active_rooms.keys():
-		# 	print("active room id: ", r)
-		# for r in self.active_rooms.values():
-		# 	print("players in active room:", r[0].id, "  ", r[1].id)
-        # looger.info("ALGO")
-        logger.info("-----HABEMOS ENTRAO EN addPlayer-----")
-
+        self.connected_players.append(player.id)
         self.waiting_players.append(player)
+
         individual_matches = await sync_to_async(Match.objects.filter)(
             Q(player1_id=player.id) | Q(player2_id=player.id))
         individual_played = await sync_to_async(individual_matches.count)()
@@ -110,6 +89,9 @@ class gameSetter:
     async def disconnectPlayer(self, player):
 
         logger.info("---PASO POR AQUI-------")
+
+        if player.id in self.connected_players:
+            self.connected_players.remove(player.id)
 
         for roomID in self.active_rooms:
             logger.info(f"roomID: {roomID}")
