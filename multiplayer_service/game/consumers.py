@@ -12,7 +12,7 @@ from .utils.gameSet import gameSetter
 
 waiting_players = []
 
-id = 1
+# id = 1
 
 gameSet = gameSetter()
 
@@ -34,7 +34,7 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 		logger.info("------HA VUELTO--------")
 
 	async def receive(self, text_data):
-		global id
+		# global id
 		data = json.loads(text_data)
 		message_type = data.get('type', 0)
 		message_action = data.get('action', 0)
@@ -45,7 +45,7 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 			id =  await self.handle_action_join_game(data)
 			display_name =  await self.handle_action_join_game_display_name(data)
 			self.player = players(self, id ,display_name)
-			id += 1
+			# id += 1
 			await gameSet.addPlayer(self.player)
 		elif message_type == 'start':
 			self.start = True
