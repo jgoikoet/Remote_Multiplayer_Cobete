@@ -27,6 +27,9 @@ class gameSetter:
         for roomID in self.active_rooms:
             logger.info(f"al entrar en addPlayer roomID: {roomID}")
 
+        for id in self.connected_players:
+            logger.info(f"conectado {id}")
+
         if player.id in self.connected_players:
             self.connected_players.append(player.id)
             await player.connect.send(text_data=json.dumps({
@@ -112,6 +115,8 @@ class gameSetter:
         for roomID in self.active_rooms:
             logger.info(f"al entrar e disconectPlayer roomID: {roomID}")
 
+        await asyncio.sleep(0.4)
+        
         try:
 
             if player in self.waiting_players:
@@ -138,6 +143,7 @@ class gameSetter:
                             'type': 'waiting',
                             'action': 'waitForPlayer'
                         }))
+                    await asyncio.sleep(0.3)
                     await self.addPlayer(room[1])
                 else:
                     room[0].connect.start = False
@@ -154,6 +160,7 @@ class gameSetter:
                             'type': 'waiting',
                             'action': 'waitForPlayer'
                         }))
+                    await asyncio.sleep(0.3)
                     await self.addPlayer(room[0])
                 # if player.room_id in self.active_rooms:
                 #     logger.info("-------------BORRAMOS ROOM----------------")
