@@ -19,6 +19,12 @@ class players:
         self.move = True
         self.win = False
     
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
     def handleMoveMessage(self, message):
         if message == 'leftOn':
             self.left = True

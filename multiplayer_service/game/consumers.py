@@ -2,6 +2,7 @@ import json
 import jwt
 import logging  
 from django.conf import settings
+import asyncio
 
 logger = logging.getLogger(__name__) 
 
@@ -25,13 +26,15 @@ class GameMatchmakingConsumer(AsyncWebsocketConsumer):
 			return None
 
 	async def connect(self):
+		await asyncio.sleep(0.5)
 		await self.accept() 
 		self.player = None
 
 	async def disconnect(self, close_code):
-		logger.info(f"disconnect {self.player.display_name} {self.player.id}")
+		# await asyncio.sleep(0.1)
+		logger.info(f"-------------------disconnect {self.player.display_name} {self.player.id}")
 		await gameSet.disconnectPlayer(self.player)
-		logger.info("------HA VUELTO--------")
+		# logger.info("------HA VUELTO--------")
 
 	async def receive(self, text_data):
 		# global id
