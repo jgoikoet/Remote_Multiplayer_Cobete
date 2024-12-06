@@ -8,6 +8,9 @@ import logging
 
 from .gamePlayer import gamePlayer
 
+from asgiref.sync import sync_to_async
+from ..models import Match
+
 logger = logging.getLogger(__name__)
 
 connected_players = []
@@ -34,13 +37,6 @@ class gameSetter:
 
         for id in connected_players:
             logger.info(f"conectado {id}")
-
-
-        # await asyncio.sleep(0.1)
-        # if player.id in awaiting_to_disconnect_players and player.id in connected_players:
-        #     logger.info(f"-------------------------------------ESTABA EN AWAITING-----")
-        #     awaiting_to_disconnect_players.remove(player.id)
-        #     connected_players.remove(player.id)
 
         if player.id in connected_players:
             logger.info(f"--------DOBLE CONEXION---{player.id}-------------------------------------")
@@ -93,8 +89,6 @@ class gameSetter:
                 if p_played < 5 or individual_played < 5 or abs(p_win_percentage - win_percentage) <= 25:
                     waiting_players.remove(p)
                     waiting_players.remove(player)
-                    # if player.id == p.id:
-                    #     return
                     room_id = f"room_{player.id}_{p.id}"
                     player.room_id = room_id
                     p.room_id = room_id
@@ -124,79 +118,88 @@ class gameSetter:
         }))
 
     
+
+    
     async def disconnectPlayer(self, player):
 
-        logger.info("---ENTRA EN DISCONNECT PLAYER-------")
+        logger.info("---ENTERS IN DISCONNECT PLAYER-------")
 
 
         if player.id in connected_players:
-            logger.info(F"-------------------SE DESCONECTA {player.display_name} {player.id}")
+            logger.info(F"-------------------DISCONECTS {player.display_name} {player.id}")
             connected_players.remove(player.id)
-        # else:
-        #     awaiting_to_disconnect_players.append(player.id)
 
         for roomID in self.active_rooms:
-            logger.info(f"al entrar e disconectPlayer roomID: {roomID}")
+            logger.info(f"AS ENTERING IN DISCONNECT PLAYER roomID: {roomID}")
 
+        if player in waiting_players:
+            waiting_players.remove(player)
         # await asyncio.sleep(0.4)
 
         try:
 
-            if player in waiting_players:
-                waiting_players.remove(player)
-                
             if player.room_id in self.active_rooms:
 
                 room = self.active_rooms[player.room_id]
-                # if room[1] in waiting_players:
-                #     waiting_players.remove(room[1])
-                # if room[0] in waiting_players:
-                #     waiting_players.remove(room[0])
                 self.active_rooms.pop(player.room_id, None)
                 #active_rooms.pop(player.room_id)
-                logger.info(f"desconectado: {player.display_name}, ID: {player.id}")
+                logger.info(f"disconnectes: {player.display_name}, ID: {player.id}")
                 self.tasks[player.room_id].cancel()
                 if room[0] ==  player:
                     room[1].connect.start = False
-                    # if room[1].id in connected_players:
-                    #     connected_players.remove(room[1].id)
                     room[1].resetPlayer()
-                    await room[1].connect.send(text_data=json.dumps({
-                        'type': 'waiting',
-                        'action': 'otherPlayerDisconnect'
-                    }))
-                    await asyncio.sleep(3)
-                    if not room[1].continueGame:
+                    if room[0].points == 0 and room[1].points == 0:
                         await room[1].connect.send(text_data=json.dumps({
                             'type': 'waiting',
-                            'action': 'waitForPlayer'
+                            'action': 'otherPlayerDisconnect'
                         }))
+                    else:
+                        await self.disconnectAndWin (room[0], room[1], player)
+
                     await asyncio.sleep(0.5)
                     
                     # await self.addPlayer(room[1])
                 else:
-                    # if room[0].id in connected_players:
-                    #     connected_players.remove(room[0].id)
                     room[0].connect.start = False
                     room[0].resetPlayer()
-                    await room[0].connect.send(text_data=json.dumps({
-                        'type': 'waiting',
-                        'action': 'otherPlayerDisconnect'
-                    }))
-                    await asyncio.sleep(3)
-                    if not room[0].continueGame:
+                    if room[0].points == 0 and room[1].points == 0:
                         await room[0].connect.send(text_data=json.dumps({
                             'type': 'waiting',
-                            'action': 'waitForPlayer'
+                            'action': 'otherPlayerDisconnect'
                         }))
+                    else:
+                        await self.disconnectAndWin (room[0], room[1], player)
                     await asyncio.sleep(0.5)
-                    
-                    # await self.addPlayer(room[0])
-                # if player.room_id in self.active_rooms:
-                #     logger.info("-------------BORRAMOS ROOM----------------")
-                #     self.active_rooms.pop(player.room_id, None)
 
-            # logger.info("---PASO POR AQUI ENDESPUE-------")
+            # logger.info("---FINISH DISCCONECT PLAYER-------")
 
         except Exception as e:
             logger.error(f"Error en disconnectPlayer: {e}")
+    
+    async def disconnectAndWin(self, player1, player2, disconnectedPlayer):
+        await player.connect.send(text_data=json.dumps({
+            'type': 'waiting',
+            'action': 'otherPlayerDisconnectYouWin'
+        }))
+
+        if disconnectedPlayer == player1:
+            winner = player2
+            player2.points = 2
+            player1.points = 0
+        else:
+            winner = player1
+            player2.points = 0
+            player1.points = 1
+
+
+        data = {
+			"player1_id": player1.id,
+			"player2_id": player2.id,
+			"player1_display_name": player1.display_name,
+			"player2_display_name": player2.display_name,
+			"player1_score": player1.points,
+			"player2_score": player2.points,
+			"winner_id": winner
+		}
+        
+        await sync_to_async(Match.objects.create)(**data)
